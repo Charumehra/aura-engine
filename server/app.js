@@ -7,6 +7,7 @@ import notFound from "./src/middleware/notFound.js";
 import errorHandler from "./src/middleware/errorMiddleware.js";
 import testRoute from "./src/routes/testRoute.js";
 import inventoryRoutes from "./src/routes/inventoryRoutes.js";
+import analyticsRoutes from "./src/routes/analyticsRoutes.js";
 
 
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/test", testRoute);
 
 app.use("/api/inventory", inventoryRoutes);
 
+app.use("/api/analytics", analyticsRoutes);
 app.use(notFound);
 
 app.use(errorHandler);
