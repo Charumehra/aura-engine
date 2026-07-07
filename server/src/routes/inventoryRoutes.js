@@ -1,9 +1,41 @@
 import express from "express";
-import { getInventoryController } from "../controllers/inventoryController.js";
+import validateProduct from "../middleware/validateProduct.js";
+
+import {
+  getInventoryController,
+  createProductController,
+  getProductByIdController,
+  updateProductController,
+  deleteProductController,
+} from "../controllers/inventoryController.js";
+
 
 const router = express.Router();
 
-// GET /api/inventory
+// Inventory List
 router.get("/", getInventoryController);
+
+// Get Single Product
+router.get("/:id", getProductByIdController);
+
+// Create Product
+router.post(
+  "/",
+  validateProduct,
+  createProductController
+);
+
+// Update Product
+router.put(
+  "/:id",
+  validateProduct,
+  updateProductController
+);
+
+// Delete Product
+router.delete(
+  "/:id",
+  deleteProductController
+);
 
 export default router;

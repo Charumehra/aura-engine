@@ -1,6 +1,11 @@
+import mongoose from "mongoose";
 import {
   getInventory,
   getTotalProducts,
+  createProduct,
+  getProductById,
+  updateProduct,
+  deleteProduct,
 } from "../repositories/inventoryRepository.js";
 
 import { validateInventoryQuery } from "../utils/queryValidator.js";
@@ -124,4 +129,54 @@ export const fetchInventory = async (query) => {
       hasNextPage: page < totalPages,
     },
   };
+};
+
+// Create Product
+export const addProduct = async (productData) => {
+  return await createProduct(productData);
+};
+
+// Get Product By ID
+export const fetchProductById = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid product ID.");
+  }
+
+  const product = await getProductById(id);
+
+  if (!product) {
+    throw new Error("Product not found.");
+  }
+
+  return product;
+};
+
+// Update Product
+export const editProduct = async (id, productData) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid product ID.");
+  }
+
+  const product = await updateProduct(id, productData);
+
+  if (!product) {
+    throw new Error("Product not found.");
+  }
+
+  return product;
+};
+
+// Delete Product
+export const removeProduct = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid product ID.");
+  }
+
+  const product = await deleteProduct(id);
+
+  if (!product) {
+    throw new Error("Product not found.");
+  }
+
+  return product;
 };
