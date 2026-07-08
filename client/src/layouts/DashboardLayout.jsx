@@ -1,40 +1,43 @@
 import { useState } from "react";
-import Sidebar from "../components/layout/Sidebar";
+
 import Navbar from "../components/layout/Navbar";
+import Sidebar from "../components/layout/Sidebar";
 
 const DashboardLayout = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] =
+    useState(false);
+
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
 
   return (
     <div className="min-h-screen bg-slate-100">
       <Sidebar
         collapsed={collapsed}
         setCollapsed={setCollapsed}
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
       />
 
-      {/* Mobile Overlay */}
-      {!collapsed && (
-        <div
-          className="fixed inset-0 bg-black/40 z-30 lg:hidden"
-          onClick={() => setCollapsed(true)}
-        />
-      )}
+      <Navbar
+        collapsed={collapsed}
+        setMobileOpen={setMobileOpen}
+      />
 
-      {/* Main Content */}
-      <div
-        className={`transition-all duration-300 ${
-          collapsed ? "lg:ml-20" : "lg:ml-64"
-        }`}
+      <main
+        className={`
+          transition-all duration-300
+          p-4 md:p-6
+
+          ${
+            collapsed
+              ? "lg:ml-20"
+              : "lg:ml-64"
+          }
+        `}
       >
-        <Navbar
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-        />
-
-        <main className="p-4 md:p-6 lg:p-8">
-          {children}
-        </main>
-      </div>
+        {children}
+      </main>
     </div>
   );
 };

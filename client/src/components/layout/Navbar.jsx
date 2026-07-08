@@ -3,6 +3,7 @@ import {
   Menu,
   UserCircle,
 } from "lucide-react";
+
 import { useLocation } from "react-router-dom";
 
 const pages = {
@@ -10,56 +11,79 @@ const pages = {
     title: "Dashboard",
     subtitle: "Business Overview",
   },
+
   "/inventory": {
     title: "Inventory",
-    subtitle: "Manage Warehouse Inventory",
+    subtitle:
+      "Manage Warehouse Inventory",
   },
 };
 
-const Navbar = ({ setCollapsed }) => {
+const Navbar = ({
+  collapsed,
+  setMobileOpen,
+}) => {
   const { pathname } = useLocation();
 
   const page = pages[pathname] || {
-    title: "Aura Engine",
+    title: "Aura Enterprise Engine",
     subtitle: "",
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-white px-4 md:px-6">
-      {/* Left */}
-      <div className="flex items-center gap-4">
-        <button
-          className="rounded-md p-2 hover:bg-gray-100 lg:hidden"
-          onClick={() => setCollapsed((prev) => !prev)}
-        >
-          <Menu size={22} />
-        </button>
+    <header
+      className={`
+        sticky top-0 z-30
+        bg-white border-b
 
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {page.title}
-          </h1>
+        transition-all duration-300
 
-          {page.subtitle && (
-            <p className="hidden text-sm text-gray-500 md:block">
+        ${
+          collapsed
+            ? "lg:ml-20"
+            : "lg:ml-64"
+        }
+      `}
+    >
+      <div className="flex h-16 items-center justify-between px-4 md:px-8">
+        {/* Left */}
+        <div className="flex items-center gap-4">
+          {/* Mobile Menu */}
+          <button
+            className="rounded-lg p-2 hover:bg-gray-100 lg:hidden"
+            onClick={() =>
+              setMobileOpen(true)
+            }
+          >
+            <Menu size={22} />
+          </button>
+
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold">
+              {page.title}
+            </h1>
+
+            <p className="hidden md:block text-sm text-gray-500">
               {page.subtitle}
             </p>
-          )}
+          </div>
         </div>
-      </div>
 
-      {/* Right */}
-      <div className="flex items-center gap-4">
-        <button className="rounded-full p-2 transition hover:bg-gray-100">
-          <Bell size={20} />
-        </button>
+        {/* Right */}
+        <div className="flex items-center gap-3 md:gap-5">
+          <button className="relative rounded-full p-2 hover:bg-gray-100">
+            <Bell size={20} />
 
-        <button className="rounded-full transition hover:scale-105">
-          <UserCircle
-            size={34}
-            className="text-gray-700"
-          />
-        </button>
+            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500"></span>
+          </button>
+
+          <button className="rounded-full hover:scale-105 transition">
+            <UserCircle
+              size={34}
+              className="text-gray-700"
+            />
+          </button>
+        </div>
       </div>
     </header>
   );
