@@ -11,7 +11,6 @@ import {
 import { validateInventoryQuery } from "../utils/queryValidator.js";
 
 export const fetchInventory = async (query) => {
-  // Validate query parameters
   validateInventoryQuery(query);
 
   let {
@@ -23,18 +22,17 @@ export const fetchInventory = async (query) => {
     maxPrice,
     stock,
     sort = "productName",
+    order = "asc",
   } = query;
 
-  // Convert pagination values
   page = Number(page);
   limit = Number(limit);
 
   const skip = (page - 1) * limit;
 
-  // MongoDB Filter
   const filter = {};
 
-  // Search by Product Name or SKU
+  // Search
   if (search) {
     filter.$or = [
       {
@@ -52,72 +50,47 @@ export const fetchInventory = async (query) => {
     ];
   }
 
-  // Category Filter
+  // Category
   if (category) {
     filter.category = category;
   }
 
-  // Price Range Filter
+  // Price Range
   if (minPrice || maxPrice) {
     filter.price = {};
 
-    if (minPrice) {
-      filter.price.$gte = Number(minPrice);
-    }
+    if (minPrice) filter.price.$gte = Number(minPrice);
 
-    if (maxPrice) {
-      filter.price.$lte = Number(maxPrice);
-    }
+    if (maxPrice) filter.price.$lte = Number(maxPrice);
   }
 
-  // Low Stock Filter
+  // Stock
   if (stock) {
     filter.stockQuantity = {
       $lte: Number(stock),
     };
   }
 
-  // Allowed Sort Fields
   const allowedSortFields = [
     "productName",
+    "category",
     "price",
     "stockQuantity",
-    "category",
+    "reorderLevel",
     "lastUpdated",
   ];
 
-  let sortField = sort;
-  let sortOrder = 1;
-
-  if (sort.startsWith("-")) {
-    sortField = sort.substring(1);
-    sortOrder = -1;
-  }
-
-  if (!allowedSortFields.includes(sortField)) {
-    sortField = "productName";
-    sortOrder = 1;
-  }
+  const sortField = allowedSortFields.includes(sort) ? sort : "productName";
 
   const mongoSort = {
-    [sortField]: sortOrder,
+    [sortField]: order === "desc" ? -1 : 1,
   };
 
-  // Fetch Products
-  const products = await getInventory(
-    filter,
-    mongoSort,
-    skip,
-    limit
-  );
+  const products = await getInventory(filter, mongoSort, skip, limit);
 
-  // Count Total Records
   const totalRecords = await getTotalProducts(filter);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(totalRecords / limit)
-  );
+  const totalPages = Math.ceil(totalRecords / limit);
 
   return {
     products,
